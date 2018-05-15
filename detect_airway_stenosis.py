@@ -14,13 +14,12 @@ import data
 import detect_stenosis
 import sys
 
-root_path = '../5/'
-# root_path = 'AirwayStenosis/20160102/NI JU PING_00924781_165829/1.0 x 1.0_20160102_170045/'
-
+root_path_1 = '../5/'
+root_path_2 = '../qiguan/qiguan01/'
 # for test: 单张测试
-path = root_path + '17.dcm'
-# path = root_path + '00000119.dcm'
-img = data.load_dcm(path)
+test_path_1 = root_path_1 + '17.dcm'
+test_path_2 = root_path_2 + '00000119.dcm'
+img = data.load_dcm(test_path_2)
 flag, degree = detect_stenosis.detect_stenosis(img)
 print("flag: ", flag)
 print("degree: ", degree)
