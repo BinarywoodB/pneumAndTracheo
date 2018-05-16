@@ -19,6 +19,7 @@ def detect_stenosis(src_img):
     # resize img to 512*512
     img = cv2.resize(src_img, (int(src_img.shape[0] / 2), int(src_img.shape[1] / 2)))
     cv2.imshow('origin', img)
+    print(img)
     flag = True
     degree = 0.3
 
@@ -51,7 +52,7 @@ def main_process(src_img):
 
         # Step 3: 得到main_air_part_img -- 主体区域中CT值接近空气的部分，即可能包含气管支气管与肺部气胸
         # 3.1 对图像进行阈值分割，二值化，拿到全图中和空气CT值接近的部分 air_part_img
-        ret, air_part_img = cv2.threshold(src_img, -900, 3071, cv2.THRESH_BINARY)
+        ret, air_part_img = cv2.threshold(src_img, -880, 3071, cv2.THRESH_BINARY)
         air_part_img = np.uint8(air_part_img)
         cv2.imshow('air_part_img', air_part_img)
         main_air_part_img = np.zeros(src_img.shape, np.uint8)
@@ -81,7 +82,12 @@ def main_process(src_img):
         if tracheo_contour != []:
             cv2.fillPoly(tracheo, [tracheo_contour], 255)
         cv2.imshow('tracheo', tracheo)
-    
+        
+        # 黑帽
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))       
+        blackhat = cv2.morphologyEx(src_img, cv2.MORPH_BLACKHAT, kernel)
+        cv2.imshow('blackhat', blackhat)
+        
         # 计算气管支气管的横截面积下降程度
         degree = 0
         return True, degree
