@@ -29,7 +29,7 @@ def _rule_out_tracheal_area(pneum):
             cv2.fillPoly(pneum, [contour], 0)
     return pneum
 
-# 分割得到 胸廓lung 和 气胸轮廓pnuem
+# 分割得到 胸廓lung 和 气胸轮廓pneum
 def segmenting(srcimg):
     # TODO(ZRHonor): 图像提取优化, 闭操作等
 
@@ -56,12 +56,7 @@ def segmenting(srcimg):
     cv2.imshow('lung',lung)
     # TODO: lung 开操作后仅保留两个肺腔，再闭操作
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
-    erosion = cv2.erode(lung, kernel, iterations = 1)
-    cv2.imshow('lung erosion', erosion)        
-    lung = cv2.dilate(erosion, kernel, iterations = 1)
-    # cv2.imshow('lung dilate', dilation)    
-    # lung = cv2.erode(dilation, kernel, iterations = 1)
-    cv2.imshow('lung open operation', lung)
+    opening = cv2.morphologyEx(lung, cv2.MORPH_OPEN, kernel)
     img2, contours, _ = cv2.findContours(
         lung, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # find first 2 largest area
@@ -72,13 +67,13 @@ def segmenting(srcimg):
     second_max_area_contour = []
     for contour in contours:
         area = cv2.contourArea(contour)
-        print("area: ", area)
+        # print("area: ", area)
         if area > max_area:
             second_max_area = max_area
             max_area = area
             second_max_area_contour = max_area_contour
             max_area_contour = contour
-    print("max_area: ", max_area, "; second max area: ", second_max_area)
+    # print("max_area: ", max_area, "; second max area: ", second_max_area)
     if max_area == 0:
         return None, None
     elif second_max_area == 0:
@@ -101,7 +96,7 @@ def segmenting(srcimg):
     pneum[lung < 127] = 0
     cv2.imshow('black', black)
     # cv2.imshow('lung', lung)    
-    cv2.imshow('pnuem', pneum)    
+    cv2.imshow('pneum00', pneum)    
 
     # cv2.imshow('result',pneum)
     # cv2.waitKey(5)

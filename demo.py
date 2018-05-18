@@ -7,7 +7,7 @@ import data
 import seg_pneum
 import sys
 
-root_path = '../5/'
+root_path = '../data/5/'
 cv2.waitKey()
 pneum_area = []
 lung_area = []
