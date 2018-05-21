@@ -6,32 +6,40 @@ import cv2
 import data
 import seg_pneum
 import sys
+import os
 
-root_path = '../data/5/'
-cv2.waitKey()
-pneum_area = []
-lung_area = []
-# for i in range(1, 70):
-#     # print(i)
-#     path = root_path + '{0}.dcm'.format(i)
-#     img = data.load_dcm(path)
-#     # flag, pneum, pneum_contours, ratio = seg_pneum.seg_pneum(img)
-#     flag, pneum, pneum_contours, pneum_s, lung_s = seg_pneum.seg_pneum(img)
-#     pneum_area.append(pneum_s)
-#     lung_area.append(lung_s)
-#     # print(flag, ratio)
-#     cv2.waitKey(100)
-# # print('pneum: ', pneum_area)
-# # print('lung: ', lung_area)
-# total_pneum_area = sum(filter(None, pneum_area))
-# total_lung_area = sum(filter(None, lung_area))
-# print('ratio: ', total_pneum_area / total_lung_area)
-# cv2.waitKey()
-path = root_path + '14.dcm'
-img = data.load_dcm(path)
-flag, pneum_s, lung_s = seg_pneum.seg_pneum(img)
-ratio = 0
-if lung_s != None:
-    ratio  = pneum_s / lung_s
-print("lung_area: ", lung_s, "pneum_s", pneum_s, "ratio: ", ratio)
-cv2.waitKey()
+MODE_TEST = 1
+MODE_ALL = 0
+mode = MODE_TEST
+
+root_path = '../data/6/'
+print("root_path: ", root_path)
+if mode == MODE_ALL:
+    # folder mode
+    pneum_areas = []
+    lung_areas = []
+    files = os.listdir(root_path)
+    files.sort()
+    for file in files:
+        print(file)
+        fileName = root_path + file
+        img = data.load_dcm(fileName)
+        flag, pneum_area, lung_area = seg_pneum.seg_pneum(img)
+        pneum_areas.append(pneum_area)
+        lung_areas.append(lung_area)
+        print("flag: ", flag, "\tpneum area: ", pneum_area, "\tlung_area: ", lung_area)
+        cv2.waitKey(100)
+
+    total_pneum_area = sum(filter(None, pneum_areas))
+    total_lung_area = sum(filter(None, lung_areas))
+    print("================================")
+    print('ratio: ', total_pneum_area / total_lung_area)
+else:
+    # single test
+    fileName = root_path + "14.dcm"
+    img = data.load_dcm(fileName)    
+    flag, pneum_area, lung_area = seg_pneum.seg_pneum(img)
+    print("flag: ", flag, "\tpneum area: ", pneum_area, "\tlung_area: ", lung_area)
+    cv2.waitKey()
+    print('ratio: ', pneum_area / lung_area)
+    
