@@ -30,18 +30,18 @@ if single_test == 1:
     root_path = '/Users/lindi/workspace/graduationDesign/qiguan/1/'
     # for test: 单张测试
     print("root_path: ", root_path)
-    test_path = root_path + '00000097.dcm'
+    test_path = root_path + '00000125.dcm'
     # corner_case: 00000160.dcm -- 
     img = data.load_dcm(test_path)
     last_situation = situation.Situation()
-    flag, current_situation = detect_stenosis.detect_stenosis(img, last_situation)    
+    flag, degree, current_situation = detect_stenosis.detect_stenosis(img, last_situation)    
     print("flag: ", flag)
     # print("degree: ", degree)
     cv2.waitKey()
     cv2.destroyAllWindows()
 elif single_test == 0:
     # 遍历某个患者的dcm folder中的每一张CT slice
-    root_path = '/Users/lindi/workspace/graduationDesign/qiguan/4/'
+    root_path = '/Users/lindi/workspace/graduationDesign/qiguan/1/'
     print("root_path: ", root_path)
     lesions = []
     max_degree = 0
@@ -66,6 +66,8 @@ elif single_test == 0:
             lesions.append(lesion)
             max_degree = min(max_degree, degree)
         cv2.waitKey(5)
+        if file == '00000125.dcm':
+            cv2.waitKey()
     print("max_degree: ", max_degree)
 
     if current_situation.stenosis_start_area != -1 and current_situation.stenosis_end_area != -1:
